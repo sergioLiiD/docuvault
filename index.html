@@ -2,7 +2,7 @@
 <html ⚡>
 <head>
   <meta charset="utf-8">
-  <title>Registro de Empresa</title>
+  <title>Gestión de Documentos</title>
   <link rel="canonical" href="self.html">
   <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
   <style amp-custom>
@@ -24,5 +24,113 @@
       <button type="submit">Registrar</button>
     </fieldset>
   </form>
+
+  <form method="post" action-xhr="/login" target="_top">
+    <fieldset>
+      <legend>Inicio de Sesión</legend>
+      <input type="email" name="email" placeholder="Correo Electrónico" required>
+      <input type="password" name="password" placeholder="Contraseña" required>
+      <button type="submit">Iniciar Sesión</button>
+    </fieldset>
+  </form>
+
+  <form method="post" action-xhr="/clients" target="_top">
+    <fieldset>
+      <legend>Crear Archivo de Cliente</legend>
+      <input type="text" name="firstName" placeholder="Nombre" required>
+      <input type="text" name="lastName" placeholder="Apellido" required>
+      <input type="tel" name="phone" placeholder="Teléfono" required>
+      <input type="email" name="email" placeholder="Correo Electrónico" required>
+      <input type="hidden" name="userId" value="<!-- ID del usuario actual -->">
+      <button type="submit">Crear Cliente</button>
+    </fieldset>
+  </form>
+
+  <form method="post" action-xhr="/documents" target="_top">
+    <fieldset>
+      <legend>Subir Documento</legend>
+      <input type="text" name="name" placeholder="Nombre del Documento" required>
+      <input type="hidden" name="clientId" value="<!-- ID del cliente actual -->">
+      <button type="submit">Subir Documento</button>
+    </fieldset>
+  </form>
+
+  <div id="client-list">
+    <h2>Clientes</h2>
+    <div id="clients"></div>
+  </div>
+
+  <div id="document-list">
+    <h2>Documentos</h2>
+    <div id="documents"></div>
+  </div>
+
+  <script>
+    // Función para obtener y mostrar clientes
+    function fetchClients(userId) {
+      fetch(`/clients/${userId}`)
+        .then(response => response.json())
+        .then(data => {
+          const clientList = document.getElementById('clients');
+          clientList.innerHTML = '';
+          data.clients.forEach(client => {
+            const clientDiv = document.createElement('div');
+            clientDiv.innerHTML = `<p>${client.firstName} ${client.lastName}</p>`;
+            clientList.appendChild(clientDiv);
+          });
+        });
+    }
+
+    // Función para obtener y mostrar documentos de un cliente
+    function fetchDocuments(clientId) {
+      fetch(`/clients/${clientId}/documents`)
+        .then(response => response.json())
+        .then(data => {
+          const documentList = document.getElementById('documents');
+          documentList.innerHTML = '';
+          data.documents.forEach(doc => {
+            const docDiv = document.createElement('div');
+            docDiv.innerHTML = `
+              <p>Nombre: ${doc.name}</p>
+              <p>Estado: ${doc.status}</p>
+              <button onclick="approveDocument(${doc.id})">Aprobar</button>
+              <button onclick="rejectDocument(${doc.id})">Rechazar</button>
+            `;
+            documentList.appendChild(docDiv);
+          });
+        });
+    }
+
+    // Función para aprobar un documento
+    function approveDocument(documentId) {
+      fetch(`/documents/${documentId}/approve`, { method: 'POST' })
+        .then(response => response.json())
+        .then(data => {
+          alert(data.message);
+          // Actualizar la lista de documentos
+          fetchDocuments(documentId);
+        });
+    }
+
+    // Función para rechazar un documento
+    function rejectDocument(documentId) {
+      const reason = prompt('Razón para el rechazo:');
+      fetch(`/documents/${documentId}/reject`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason })
+      })
+        .then(response => response.json())
+        .then(data => {
+          alert(data.message);
+          // Actualizar la lista de documentos
+          fetchDocuments(documentId);
+        });
+    }
+
+    // Llamar a las funciones para obtener datos al cargar la página
+    const userId = 1; // Reemplazar con el ID del usuario actual
+    fetchClients(userId);
+  </script>
 </body>
 </html> 
