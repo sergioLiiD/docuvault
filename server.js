@@ -1,7 +1,7 @@
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 const { body, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
@@ -181,6 +181,9 @@ app.get('/clients/:clientId/documents', (req, res) => {
     res.json({ documents: rows });
   });
 });
+
+// Servir archivos estáticos
+app.use(express.static('public'));
 
 app.listen(port, () => {
   console.log(`Servidor corriendo en http://localhost:${port}`);

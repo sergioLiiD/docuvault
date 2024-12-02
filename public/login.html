@@ -1,0 +1,35 @@
+<!doctype html>
+<html ⚡>
+<head>
+  <meta charset="utf-8">
+  <title>Inicio de Sesión</title>
+  <link rel="canonical" href="self.html">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style amp-custom>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+    }
+  </style>
+  <script async src="https://cdn.ampproject.org/v0.js"></script>
+</head>
+<body>
+  <div class="container mt-5">
+    <form method="post" action-xhr="/login" target="_top" class="mb-4">
+      <fieldset>
+        <legend>Inicio de Sesión</legend>
+        <div class="form-group">
+          <input type="email" class="form-control" name="email" placeholder="Correo Electrónico" required>
+        </div>
+        <div class="form-group">
+          <input type="password" class="form-control" name="password" placeholder="Contraseña" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+      </fieldset>
+    </form>
+  </div>
+</body>
+</html> 
